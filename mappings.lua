@@ -1,37 +1,8 @@
 local utils = require "user.utils"
 local astro_utils = require "astronvim.utils"
+local hop = require "hop"
 local mappings = {
   n = {
-    -- disable default bindings
-    ["<C-Down>"] = false,
-    ["<C-Left>"] = false,
-    ["<C-Right>"] = false,
-    ["<C-Up>"] = false,
-    ["<C-q>"] = false,
-    ["<C-s>"] = false,
-    ["q:"] = ":",
-    -- better buffer navigation
-    ["]b"] = false,
-    ["[b"] = false,
-    ["<S-l>"] = {
-      function() require("astronvim.utils.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
-      desc = "Next buffer",
-    },
-    ["<S-h>"] = {
-      function() require("astronvim.utils.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
-      desc = "Previous buffer",
-    },
-    -- better search
-    n = { utils.better_search "n", desc = "Next search" },
-    N = { utils.better_search "N", desc = "Previous search" },
-    -- better increment/decrement
-    ["-"] = { "<c-x>", desc = "Descrement number" },
-    ["+"] = { "<c-a>", desc = "Increment number" },
-    -- resize with arrows
-    ["<Up>"] = { function() require("smart-splits").resize_up(2) end, desc = "Resize split up" },
-    ["<Down>"] = { function() require("smart-splits").resize_down(2) end, desc = "Resize split down" },
-    ["<Left>"] = { function() require("smart-splits").resize_left(2) end, desc = "Resize split left" },
-    ["<Right>"] = { function() require("smart-splits").resize_right(2) end, desc = "Resize split right" },
     -- Easy-Align
     ga = { "<Plug>(EasyAlign)", desc = "Easy Align" },
     -- buffer switching
@@ -50,7 +21,7 @@ local mappings = {
     ["<leader>n"] = { "<cmd>enew<cr>", desc = "New File" },
     ["<leader>N"] = { "<cmd>tabnew<cr>", desc = "New Tab" },
     ["<leader><cr>"] = { '<esc>/<++><cr>"_c4l', desc = "Next Template" },
-    ["<leader>."] = { "<cmd>cd %:p:h<cr>", desc = "Set CWD" },
+    ["<leader>."] = { "<cmd>cd %:p:<cr>", desc = "Set CWD" },
     -- neogen
     ["<leader>a"] = { desc = "󰏫 Annotate" },
     ["<leader>a<cr>"] = { function() require("neogen").generate() end, desc = "Current" },

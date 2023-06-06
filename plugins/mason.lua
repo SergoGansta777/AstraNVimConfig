@@ -6,7 +6,6 @@ return {
       ensure_installed = {
         "clangd",
         "cssls",
-        "gopls",
         "html",
         "intelephense",
         "marksman",
