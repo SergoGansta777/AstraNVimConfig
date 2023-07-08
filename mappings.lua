@@ -1,8 +1,34 @@
 local utils = require "user.utils"
 local astro_utils = require "astronvim.utils"
-local hop = require "hop"
+
 local mappings = {
   n = {
+    ["<C-Down>"] = false,
+    ["<C-Left>"] = false,
+    ["<C-Right>"] = false,
+    ["<C-Up>"] = false,
+    ["<C-q>"] = false,
+    ["<C-s>"] = false,
+    ["q:"] = ":",
+    -- better buffer navigation
+    ["]b"] = false,
+    ["[b"] = false,
+    ["<S-l>"] = {
+      function() require("astronvim.utils.buffer").nav(vim.v.count > 0 and vim.v.count or 1) end,
+      desc = "Next buffer",
+    },
+    ["<S-h>"] = {
+      function() require("astronvim.utils.buffer").nav(-(vim.v.count > 0 and vim.v.count or 1)) end,
+      desc = "Previous buffer",
+    },
+    -- resize with arrows
+    ["<Up>"] = { function() require("smart-splits").resize_up(2) end, desc = "Resize split up" },
+    ["<Down>"] = { function() require("smart-splits").resize_down(2) end, desc = "Resize split down" },
+    ["<Left>"] = { function() require("smart-splits").resize_left(2) end, desc = "Resize split left" },
+    ["<Right>"] = { function() require("smart-splits").resize_right(2) end, desc = "Resize split right" },
+    -- better search
+    n = { utils.better_search "n", desc = "Next search" },
+    N = { utils.better_search "N", desc = "Previous search" },
     -- Easy-Align
     ga = { "<Plug>(EasyAlign)", desc = "Easy Align" },
     -- buffer switching
@@ -17,7 +43,6 @@ local mappings = {
       desc = "Switch Buffers",
     },
     -- vim-sandwich
-    ["s"] = "<Nop>",
     ["<leader>n"] = { "<cmd>enew<cr>", desc = "New File" },
     ["<leader>N"] = { "<cmd>tabnew<cr>", desc = "New Tab" },
     ["<leader><cr>"] = { '<esc>/<++><cr>"_c4l', desc = "Next Template" },
@@ -117,6 +142,7 @@ local mappings = {
     },
     ["<leader>;b"] = {
       function()
+        vim.cmd.codeium_enabled = 1
         vim.cmd.Codeium(vim.b.codeium_enabled == 0 and "EnableBuffer" or "DisableBuffer")
         astro_utils.notify("Codeium (buffer) " .. (vim.b.codeium_enabled == 0 and "Disabled" or "Enabled"))
       end,
@@ -156,8 +182,7 @@ local mappings = {
     ["al"] = { "$o^", desc = "Around line text object" },
     -- Easy-Align
     ga = { "<Plug>(EasyAlign)", desc = "Easy Align" },
-    -- vim-sandwich
-    ["s"] = "<Nop>",
+    -- vim-sandwich ["s"] = "<Nop>",
   },
   o = {
     -- line text-objects
@@ -166,14 +191,27 @@ local mappings = {
   },
 }
 
--- add more text objects for "in" and "around"
-for _, char in ipairs { "_", ".", ":", ",", ";", "|", "/", "\\", "*", "+", "%", "`", "?" } do
-  for _, mode in ipairs { "x", "o" } do
-    mappings[mode]["i" .. char] =
-      { string.format(":<C-u>silent! normal! f%sF%slvt%s<CR>", char, char, char), desc = "between " .. char }
-    mappings[mode]["a" .. char] =
-      { string.format(":<C-u>silent! normal! f%sF%svf%s<CR>", char, char, char), desc = "around " .. char }
-  end
-end
+--greates remap ever
+--xnoremap("<leader>p", "\"_dP")
+
+-- normal mode (easymotion-like)
+vim.api.nvim_set_keymap("n", "<Leader><Leader>b", "<cmd>HopWordBC<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<Leader><Leader>w", "<cmd>HopWordAC<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<Leader><Leader>j", "<cmd>HopLineAC<CR>", { noremap = true })
+vim.api.nvim_set_keymap("n", "<Leader><Leader>k", "<cmd>HopLineBC<CR>", { noremap = true })
+
+-- visual mode (easymotion-like)
+vim.api.nvim_set_keymap("v", "<Leader><Leader>w", "<cmd>HopWordAC<CR>", { noremap = true })
+vim.api.nvim_set_keymap("v", "<Leader><Leader>b", "<cmd>HopWordBC<CR>", { noremap = true })
+vim.api.nvim_set_keymap("v", "<Leader><Leader>j", "<cmd>HopLineAC<CR>", { noremap = true })
+vim.api.nvim_set_keymap("v", "<Leader><Leader>k", "<cmd>HopLineBC<CR>", { noremap = true })
+
+-- normal mode (sneak-like)
+vim.api.nvim_set_keymap("n", "s", "<cmd>HopChar2AC<CR>", { noremap = false })
+vim.api.nvim_set_keymap("n", "S", "<cmd>HopChar2BC<CR>", { noremap = false })
+
+-- visual mode (sneak-like)
+vim.api.nvim_set_keymap("v", "s", "<cmd>HopChar2AC<CR>", { noremap = false })
+vim.api.nvim_set_keymap("v", "S", "<cmd>HopChar2BC<CR>", { noremap = false })
 
 return mappings

@@ -24,3 +24,12 @@ vim.api.nvim_create_autocmd("User", {
     if new_showtabline ~= vim.opt.showtabline:get() then vim.opt.showtabline = new_showtabline end
   end,
 })
+if vim.g.neovide then
+  vim.o.guifont = "MesloLGS NF:h13:i:#e-subpixelantialias:#h-full"
+  vim.g.neovide_confirm_quit = true
+  vim.g.neovide_input_macos_alt_is_meta = true
+  vim.g.neovide_cursor_antialiasing = true
+  vim.g.neovide_cursor_animate_in_insert_mode = true
+  vim.g.neovide_cursor_animate_command_line = true
+  vim.g.neovide_cursor_vfx_mode = "railgun"
+end

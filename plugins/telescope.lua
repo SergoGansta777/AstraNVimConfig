@@ -1,6 +1,9 @@
 return {
   "nvim-telescope/telescope.nvim",
   dependencies = {
+    { "nvim-telescope/telescope-fzf-native.nvim", enabled = false },
+    "nvim-telescope/telescope-fzy-native.nvim",
+    "nvim-telescope/telescope-live-grep-args.nvim",
     "nvim-telescope/telescope-hop.nvim",
     "nvim-telescope/telescope-bibtex.nvim",
     "nvim-telescope/telescope-file-browser.nvim",
@@ -10,9 +13,11 @@ return {
     local telescope = require "telescope"
     local actions = require "telescope.actions"
     local fb_actions = require("telescope").extensions.file_browser.actions
+    local lga_actions = require "telescope-live-grep-args.actions"
     local hop = telescope.extensions.hop
     return require("astronvim.utils").extend_tbl(opts, {
       defaults = {
+        results_title = "",
         selection_caret = "  ",
         layout_config = {
           width = 0.90,
@@ -56,6 +61,15 @@ return {
             },
           },
         },
+        live_grep_args = {
+          auto_quoting = true, -- enable/disable auto-quoting
+          mappings = { -- extend mappings
+            i = {
+              ["<C-a>"] = lga_actions.quote_prompt(),
+              ["<C-f>"] = lga_actions.quote_prompt { postfix = " --iglob " },
+            },
+          },
+        },
       },
       pickers = {
         find_files = {
@@ -79,6 +93,8 @@ return {
   config = function(...)
     require "plugins.configs.telescope"(...)
     local telescope = require "telescope"
+    telescope.load_extension "fzy_native"
+    telescope.load_extension "live_grep_args"
     telescope.load_extension "bibtex"
     telescope.load_extension "file_browser"
     telescope.load_extension "projects"
